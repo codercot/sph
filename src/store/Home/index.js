@@ -15,6 +15,7 @@ const mutations = {
   }
 }
 const actions = {
+  // await async
   catory(context) {
     getCategory().then((res) => {
       context.commit("category", res.data)
