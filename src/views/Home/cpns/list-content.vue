@@ -102,11 +102,14 @@
 
 <script>
 export default {
-
+  mounted() {
+    this.$store.dispatch("bannerList")
+  },
 }
 </script>
 
 <style scoped lang="less">
+
 .list-container {
   width: 1200px;
   margin: 0 auto;

@@ -28,11 +28,11 @@
       <h1 class="logoArea">
         <router-link class="logo" to="/home">
           <img src="./logo.png" alt="">
-        </router-link >
+        </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
-          <input type="text" id="autocomplete" class="input-error input-xxlarge" v-model="keyword"/>
+          <input type="text" id="autocomplete" class="input-error input-xxlarge" v-model="keyword" />
           <button class="sui-btn btn-xlarge btn-danger" type="button" @click="goSearch">搜索</button>
         </form>
       </div>
@@ -46,19 +46,18 @@
 export default {
   data() {
     return {
-      keyword:""
+      keyword: ""
     }
   },
-    methods:{
-      goSearch(){
-        this.$router.push({
-          name:"search",
-          params:{
-            key:this.keyword
-          }
-        })
+  methods: {
+    goSearch() {
+      if (this.$route.query) {
+        let location = { name: "search", params: { keyword: this.keyword } }
+        location.query = this.$route.query
+        this.$router.push(location)
       }
     }
+  }
 }
 </script>
 

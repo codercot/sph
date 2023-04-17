@@ -3,7 +3,6 @@
     <Header></Header>
     <router-view></router-view>
     <Footer v-show="$route.meta.show"></Footer>
-
   </div>
 </template>
 
@@ -17,7 +16,10 @@ export default {
   components: {
     Footer,
     Header
-  }
+  },
+  mounted() {
+    this.$store.dispatch("catory")
+  },
 }
 </script>
 

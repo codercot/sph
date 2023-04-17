@@ -3,7 +3,7 @@ import axios from "axios";
 import nProgress from "nprogress";
 import 'nprogress/nprogress.css'
 const requests = axios.create({
-  baseURL:"/api",
+  baseURL:"/mock",
   timeout:5000
 })
 // 请求拦截器
