@@ -12,3 +12,5 @@
 
 2.映射的使用：mapstate：对象写法：mapstate({变量：(state)=>state.模块名.仓库中变量名})
                       数组写法：mapstate('模块名'，['变量名'])
+3.getters映射使用 ：数组：mapGetters(["模块明/xxx"])
+                    对象：直接手动映射 computed:{xxx(){return this.$store.getters.xxx}}                     
