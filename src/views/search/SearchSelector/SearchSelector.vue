@@ -5,7 +5,6 @@
       <div class="value logos">
         <ul class="logo-list">
           <li v-for="(item,index) in trademarkList" :key="item.tmId" @click="btn(item)">{{ item.tmName }}</li>
-          
         </ul>
       </div>
       <div class="ext">
@@ -17,7 +16,7 @@
       <div class="fl key">{{ item.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(iten, index) in item.attrValueList">
+          <li v-for="(iten, index) in item.attrValueList" @click="attrInfo(item,iten)">
             <a>{{ iten }}</a>
           </li>
         </ul>
@@ -39,6 +38,9 @@ export default {
     btn(data){
       // 使用自定义事件传递数据
       this.$emit("trademarInfo",data)
+    },
+    attrInfo(item,iten){
+      this.$emit("attrInfo",item,iten)
     }
   },
 }

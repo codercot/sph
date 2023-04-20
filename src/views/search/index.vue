@@ -20,34 +20,25 @@
             <li class="with-x" v-if="searchParams.trademark">{{ searchParams.trademark.split(":")[1] }}
               <i @click="removeTradeMark">x</i>
             </li>
+            <li class="with-x" v-for="(item, index) in searchParams.props" :key="index">{{ item.split(":")[1] }}
+              <i @click="removeAttr(index)">x</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector @trademarInfo="trademarInfo" />
+        <SearchSelector @trademarInfo="trademarInfo" @attrInfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ 'active': isOne }" @click="changeOrder(1)">
+                  <a>综合<span v-show="isOne" class="iconfont" :class="{ 'icon-up': isAsc, 'down': isDesc }"></span></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ 'active': isTwo }" @click="changeOrder(2)">
+                  <a>销量<span v-show="isTwo" class="iconfont" :class="{ 'icon-up': isAsc, 'down': isDesc }">监听</span></a>
                 </li>
               </ul>
             </div>
@@ -58,7 +49,7 @@
               <li class="yui3-u-1-5" v-for="(item, index) in goodsList" :key="item.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img :src="item.defaultImg" /></a>
+                   <router-link :to="`/detail/${item.id}`"><img :src="item.defaultImg" /></router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -82,35 +73,8 @@
 
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <pageiation :total="total" :pageSize="searchParams.pageSize" :pageNo="searchParams.pageNo" :pagerCount="5"
+            @currentPage="currentPage"></pageiation>
         </div>
       </div>
     </div>
@@ -118,14 +82,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import typeNav from '../Home/cpns/typeNav.vue';
 import SearchSelector from './SearchSelector/SearchSelector'
+import pageiation from '@/components/pageiation/pageiation.vue';
 export default {
   name: 'Search',
   components: {
     SearchSelector,
-    typeNav
+    typeNav,
+    pageiation
   },
   data() {
     return {
@@ -135,9 +101,9 @@ export default {
         category3Id: "",
         categoryName: "",
         keyword: "",
-        props:[],
+        props: [],
         trademark: "",
-        order: "",
+        order: "1:desc",
         // 代表当前第几页
         pageNo: 1,
         // 每一页展示几个
@@ -156,6 +122,7 @@ export default {
     getData() {
       this.$store.dispatch("searchList", this.searchParams)
     },
+    // 移除id
     removeName() {
       this.searchParams.categoryName = ""
       //1，2，3id服务器现在是不需要的
@@ -168,6 +135,7 @@ export default {
         this.$router.push({ name: "search", params: this.$route.params })
       }
     },
+    // 移除搜索框关键字
     removeKeyWord() {
       this.searchParams.keyword = "";
       this.getData()
@@ -178,8 +146,13 @@ export default {
       }
     },
     // 移除品牌面包屑
-    removeTradeMark(){
-      this.searchParams.trademark=""
+    removeTradeMark() {
+      this.searchParams.trademark = ""
+      this.getData()
+    },
+    // 移除品牌属性面包屑
+    removeAttr(index) {
+      this.searchParams.props.splice(index, 1)
       this.getData()
     },
     // 品牌信息
@@ -187,7 +160,34 @@ export default {
       // console.log(item);
       this.searchParams.trademark = `${item.tmId}:${item.tmName}`
       this.getData()
-    }
+    },
+    // attr点击
+    //  ["属性ID:属性值:属性名"]
+    attrInfo(item, iten) {
+      console.log(item, iten);
+      let props = `${item.attrId}:${iten}:${item.attrName}`
+      // 数组去重
+      if (this.searchParams.props.indexOf(props) == -1) {
+        this.searchParams.props.push(props)
+      }
+      this.getData()
+    },
+    // 排序的点击
+    // changeOrder(flag){
+    //   let originOrder = this.searchParams.order
+    //   let originFlag = this.searchParams.order.split(":")[0]
+    //   let originSort = this.searchParams.order.split(":")[1]
+
+    //   let newOrder = ""
+    //   if(flag==originFlag){
+    //     newOrder = `${}`
+    //   }
+    // }
+    currentPage(pageNo) {
+      //父组件整理参数
+      this.searchParams.pageNo = pageNo;
+      this.getData();
+    },
   },
 
   watch: {
@@ -203,7 +203,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["goodsList"])
+    ...mapGetters(["goodsList"]),
+    ...mapState({
+      total: state => state.search.searchList.total
+    }),
+    isOne() {
+      return this.searchParams.order.includes("1")
+    },
+    isTwo() {
+      return this.searchParams.order.includes("2")
+    },
+    isAsc() {
+      return this.searchParams.order.includes("asc")
+    },
+    isDesc() {
+      return this.searchParams.order.includes("desc")
+    }
   }
 }
 </script>
