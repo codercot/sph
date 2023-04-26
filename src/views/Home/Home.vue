@@ -11,7 +11,7 @@
     <!-- 猜你喜欢 -->
     <like></like>
     <!-- 家用电器 -->
-    <floor v-for="(item,index) in floorList" :key="item.id" :floor="item"></floor>
+    <floor v-for="(item, index) in floorList" :key="item.id" :floor="item"></floor>
     <!-- 商标 -->
     <brand></brand>
   </div>
@@ -38,7 +38,9 @@ export default {
   },
   // 派发事件，获取floor数据
   mounted() {
-    this.$store.dispatch("floorList")
+    this.$store.dispatch("floorList"),
+      // 获取用户信息
+      this.$store.dispatch("userInfo")
   },
   // 获取floor数据
   computed: {

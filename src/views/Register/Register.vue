@@ -3,7 +3,7 @@
     <!-- 注册内容 -->
     <div class="register">
       <h3>注册新用户
-        <span class="go">我有账号，去 <a href="login.html" target="_blank">登陆</a>
+        <span class="go">我有账号，去 <router-link to="/login">登录</router-link>
         </span>
       </h3>
       <div class="content">
@@ -18,12 +18,12 @@
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="password" placeholder="请输入你的登录密码">
+        <input type="password" placeholder="请输入你的登录密码" v-model="password">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="password" placeholder="请输入确认密码">
+        <input type="password" placeholder="请输入确认密码" v-model="password1">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="controls">
@@ -62,10 +62,13 @@ export default {
     return {
       phone: "",
       code: "",
+      password: "",
+      password1: "",
       agree: true
     }
   },
   methods: {
+
     // 验证码
     async getCode() {
       try {
@@ -76,9 +79,22 @@ export default {
       }
     },
     // 注册
-    register() {
+    async register() {
+      const { phone, code, password, password1 } = this
+      try {
+        if (phone && code && password == password1) {
+          await this.$store.dispatch("getRegister", { phone, password, code })
+          // 注册成功后路由跳转
+          this.$router.push("/login")
+          alert("注册成功，请登录")
+        } else {
+          alert("验证码错误或者密码输入不一致")
+        }
+      } catch (error) {
+        alert("手机号已被注册！")
+      }
+    },
 
-    }
   }
 }
 </script>

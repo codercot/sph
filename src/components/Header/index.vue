@@ -5,15 +5,18 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!getName">
             <span>请</span>
-            <routerLink to="/login">登录</routerLink>
+            <a @click="$router.push('/login')">登录</a>
             <routerLink to="register" class="register">免费注册</routerLink>
+          </p>
+          <p v-if="getName"> <a>{{ getName }}</a>
+            <a @click="userLogout"> | 退出登录</a>
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+         <router-link to="/center/myorder">我的订单</router-link>
+          <router-link to="/shopcart">我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -41,7 +44,7 @@
 </template>
 
 <script>
-
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -56,13 +59,27 @@ export default {
         location.query = this.$route.query
         this.$router.push(location)
       }
+    },
+    // 退出登录
+    async userLogout() {
+      try {
+        await this.$store.dispatch("userLogout")
+        this.$router.push("/")
+        location.reload()
+      } catch (error) {
+        alert("退出失败")
+      }
     }
   },
   mounted() {
-    this.$bus.$on("clear",()=>{
-      this.keyword=""
+    this.$bus.$on("clear", () => {
+      this.keyword = ""
     })
   },
+
+  computed: {
+    ...mapGetters(['getName'])
+  }
 }
 </script>
 

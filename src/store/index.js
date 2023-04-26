@@ -4,7 +4,8 @@ import Home from "./Home";
 import search from "./search";
 import detail from './Detail'
 import ShopCart from "./ShopCart";
-import Register from "./Register";
+import Register from "./User";
+import Trade from "./Trade";
 Vue.use(Vuex)
 export default new Vuex.Store({
   // 写成模块使开发
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     search,
     detail,
     ShopCart,
-    Register
+    Register,
+    Trade
   }
 })
